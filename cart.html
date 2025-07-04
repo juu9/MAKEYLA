@@ -74,6 +74,34 @@
             background: #f5f7ff;
             border-radius: 10px;
             padding: 1.2rem;
+            border: 1.5px solid #e5e7eb;
+            box-shadow: 0 2px 12px #0001;
+        }
+        .payment-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .payment-tab-btn {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 8px 8px 0 0;
+            padding: 0.6rem 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #222;
+            transition: background 0.2s, color 0.2s;
+        }
+        .payment-tab-btn.active {
+            background: #fff;
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+        }
+        .payment-tab-content {
+            display: none;
+        }
+        .payment-tab-content.active {
+            display: block;
         }
         .payment-section label {
             display: block;
@@ -139,6 +167,24 @@
             margin-top: 0.5rem;
             font-weight: bold;
             text-align: right;
+        }
+        .card-type-icon {
+            width: 38px;
+            height: 28px;
+            vertical-align: middle;
+            margin-right: 8px;
+            margin-left: 4px;
+            display: inline-block;
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid #eee;
+            object-fit: contain;
+        }
+        .payment-method-note {
+            color: #2563eb;
+            font-size: 0.98rem;
+            margin: 0.5rem 0 0.2rem 0;
+            display: none;
         }
         @media (max-width: 900px) {
             .cart-page-container {
@@ -218,30 +264,47 @@
             </div>
             <div class="payment-section">
                 <h3>الدفع</h3>
+                <div class="payment-tabs">
+                    <button type="button" class="payment-tab-btn active" onclick="showPaymentTab('card')">بطاقة بنكية</button>
+                    <button type="button" class="payment-tab-btn" onclick="showPaymentTab('applepay')">Apple Pay</button>
+                    <button type="button" class="payment-tab-btn" onclick="showPaymentTab('stcpay')">STC Pay</button>
+                </div>
                 <form id="payment-form" autocomplete="off">
-                    <label>اسم صاحب البطاقة</label>
-                    <input type="text" id="card-name" required placeholder="الاسم كما هو في البطاقة">
-                    <label>رقم الجوال</label>
-                    <input type="text" id="buyer-phone" required placeholder="05XXXXXXXX" oninput="formatPhone(this)">
-                    <label>عنوان التوصيل</label>
-                    <input type="text" id="delivery-address" required placeholder="اكتب عنوان التوصيل بالتفصيل">
-                    <label>رقم البطاقة</label>
-                    <input type="text" id="card-number" maxlength="19" required placeholder="مثال: 4242 4242 4242 4242" inputmode="numeric">
-                    <label>تاريخ الانتهاء</label>
-                    <input type="text" id="exp-date" maxlength="5" required placeholder="MM/YY" inputmode="numeric" oninput="formatExpDate(this)">
-                    <label>رمز الأمان (CVV)</label>
-                    <input type="text" id="cvv" maxlength="4" required placeholder="123" inputmode="numeric">
-                    <label>اختر طريقة الدفع</label>
-                    <select id="payment-method" required>
-                        <option value="">اختر</option>
-                        <option value="mada">مدى</option>
-                        <option value="visa">فيزا</option>
-                        <option value="mastercard">ماستركارد</option>
-                        <option value="applepay">Apple Pay</option>
-                        <option value="stcpay">STC Pay</option>
-                    </select>
-                    <button type="submit" id="pay-btn">ادفع الآن</button>
-                    <div id="payment-error" class="error-msg"></div>
+                    <div id="tab-card" class="payment-tab-content active">
+                        <label>اسم صاحب البطاقة</label>
+                        <input type="text" id="card-name" required placeholder="الاسم كما هو في البطاقة">
+                        <label>رقم الجوال</label>
+                        <input type="text" id="buyer-phone" required placeholder="05XXXXXXXX" oninput="formatPhone(this)">
+                        <label>عنوان التوصيل</label>
+                        <input type="text" id="delivery-address" required placeholder="اكتب عنوان التوصيل بالتفصيل">
+                        <label>رقم البطاقة</label>
+                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                            <input type="text" id="card-number" maxlength="19" required placeholder="مثال: 4242 4242 4242 4242" inputmode="numeric" style="flex:1" oninput="detectCardType(this)">
+                            <img id="card-type-icon" class="card-type-icon" src="" alt="" style="display:none;">
+                        </div>
+                        <label>تاريخ الانتهاء</label>
+                        <input type="text" id="exp-date" maxlength="5" required placeholder="MM/YY" inputmode="numeric" oninput="formatExpDate(this)">
+                        <label>رمز الأمان (CVV)</label>
+                        <input type="text" id="cvv" maxlength="4" required placeholder="123" inputmode="numeric">
+                        <button type="submit" id="pay-btn-card" class="pay-btn-main">ادفع الآن</button>
+                        <div id="payment-error-card" class="error-msg"></div>
+                    </div>
+                    <div id="tab-applepay" class="payment-tab-content">
+                        <label>رقم الجوال</label>
+                        <input type="text" id="applepay-phone" required placeholder="05XXXXXXXX" oninput="formatPhone(this)">
+                        <label>عنوان التوصيل</label>
+                        <input type="text" id="applepay-address" required placeholder="اكتب عنوان التوصيل بالتفصيل">
+                        <button type="submit" id="pay-btn-applepay" class="pay-btn-main" style="background:#000;color:#fff;">ادفع عبر Apple Pay</button>
+                        <div id="payment-error-applepay" class="error-msg"></div>
+                    </div>
+                    <div id="tab-stcpay" class="payment-tab-content">
+                        <label>رقم الجوال</label>
+                        <input type="text" id="stcpay-phone" required placeholder="05XXXXXXXX" oninput="formatPhone(this)">
+                        <label>عنوان التوصيل</label>
+                        <input type="text" id="stcpay-address" required placeholder="اكتب عنوان التوصيل بالتفصيل">
+                        <button type="submit" id="pay-btn-stcpay" class="pay-btn-main" style="background:#6c2eb7;color:#fff;">ادفع عبر STC Pay</button>
+                        <div id="payment-error-stcpay" class="error-msg"></div>
+                    </div>
                 </form>
                 <div id="payment-success" class="success-msg" style="display:none;">
                     تم الدفع بنجاح! شكراً لثقتك بنا.
@@ -341,6 +404,21 @@
             updateCartTotal();
         };
 
+        function showPaymentTab(tab) {
+            document.querySelectorAll('.payment-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.payment-tab-content').forEach(div => div.classList.remove('active'));
+            if (tab === 'card') {
+                document.querySelector('.payment-tab-btn:nth-child(1)').classList.add('active');
+                document.getElementById('tab-card').classList.add('active');
+            } else if (tab === 'applepay') {
+                document.querySelector('.payment-tab-btn:nth-child(2)').classList.add('active');
+                document.getElementById('tab-applepay').classList.add('active');
+            } else if (tab === 'stcpay') {
+                document.querySelector('.payment-tab-btn:nth-child(3)').classList.add('active');
+                document.getElementById('tab-stcpay').classList.add('active');
+            }
+        }
+
         // تحقق من صحة رقم البطاقة (16 رقم أو 19 مع الفراغات)
         function isValidCardNumber(number) {
             const clean = number.replace(/\s+/g, '');
@@ -384,8 +462,48 @@
             input.value = value.slice(0, 5);
         }
 
-        // عند الدفع: تحقق من صحة جميع الحقول، نفذ الدفع الحقيقي، ثم اشعار وتحويل للصفحة الرئيسية
-        document.getElementById('payment-form').onsubmit = async function(e) {
+        // عرض صورة نوع البطاقة تلقائياً
+        function detectCardType(input) {
+            const val = input.value.replace(/\s+/g, '');
+            const icon = document.getElementById('card-type-icon');
+            icon.style.display = 'none';
+            icon.src = '';
+            icon.alt = '';
+            if (/^4/.test(val)) {
+                icon.src = 'https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png';
+                icon.alt = 'Visa';
+                icon.style.display = '';
+            } else if (/^(5[1-5]|2[2-7])/.test(val)) {
+                icon.src = 'https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png';
+                icon.alt = 'Mastercard';
+                icon.style.display = '';
+            } else if (/^6(011|5)/.test(val)) {
+                icon.src = 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Mada_Logo.png';
+                icon.alt = 'Mada';
+                icon.style.display = '';
+            }
+        }
+
+        // ملاحظة عند اختيار Apple Pay وتحويل المستخدم
+        function handlePaymentMethodChange(sel) {
+            const note = document.getElementById('applepay-note');
+            const cardFields = document.getElementById('card-fields');
+            if (sel.value === 'applepay') {
+                note.style.display = 'block';
+                cardFields.style.display = 'none';
+            } else {
+                note.style.display = 'none';
+                cardFields.style.display = '';
+            }
+        }
+
+        // منع إرسال النموذج الافتراضي
+        document.getElementById('payment-form').onsubmit = function(e) {
+            e.preventDefault();
+        };
+
+        // دفع البطاقة البنكية
+        document.getElementById('pay-btn-card').onclick = async function(e) {
             e.preventDefault();
             const cardName = document.getElementById('card-name').value.trim();
             const buyerPhone = document.getElementById('buyer-phone').value.trim();
@@ -393,8 +511,7 @@
             const cardNumber = document.getElementById('card-number').value.trim();
             const expDate = document.getElementById('exp-date').value.trim();
             const cvv = document.getElementById('cvv').value.trim();
-            const paymentMethod = document.getElementById('payment-method').value;
-            const errorDiv = document.getElementById('payment-error');
+            const errorDiv = document.getElementById('payment-error-card');
             errorDiv.textContent = '';
 
             if (!cardName) {
@@ -421,13 +538,8 @@
                 errorDiv.textContent = "رمز الأمان غير صحيح. يجب أن يكون 3 أو 4 أرقام.";
                 return;
             }
-            if (!paymentMethod) {
-                errorDiv.textContent = "يرجى اختيار طريقة الدفع.";
-                return;
-            }
 
-            document.getElementById('pay-btn').disabled = true;
-
+            document.getElementById('pay-btn-card').disabled = true;
             try {
                 await payWithAPI({
                     name: cardName,
@@ -436,15 +548,79 @@
                     card: cardNumber,
                     exp: expDate,
                     cvv: cvv,
-                    method: paymentMethod,
+                    method: "card",
                     amount: document.getElementById('cart-total').textContent
                 });
-
-                alert('تم الدفع بنجاح! تم إرسال طلبك وسيتم التواصل معك قريباً.');
-                window.location.href = "index.html";
+                document.getElementById('payment-success').style.display = 'block';
+                errorDiv.textContent = '';
+                setTimeout(() => window.location.href = "index.html", 1200);
             } catch (err) {
                 errorDiv.textContent = err.message || "حدث خطأ أثناء الدفع، حاول مرة أخرى.";
-                document.getElementById('pay-btn').disabled = false;
+                document.getElementById('pay-btn-card').disabled = false;
+            }
+        };
+
+        // دفع Apple Pay
+        document.getElementById('pay-btn-applepay').onclick = async function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('applepay-phone').value.trim();
+            const address = document.getElementById('applepay-address').value.trim();
+            const errorDiv = document.getElementById('payment-error-applepay');
+            errorDiv.textContent = '';
+            if (!isValidPhone(phone)) {
+                errorDiv.textContent = "يرجى إدخال رقم جوال سعودي صحيح (05XXXXXXXX).";
+                return;
+            }
+            if (!address) {
+                errorDiv.textContent = "يرجى إدخال عنوان التوصيل.";
+                return;
+            }
+            document.getElementById('pay-btn-applepay').disabled = true;
+            try {
+                await payWithAPI({
+                    phone,
+                    address,
+                    method: "applepay",
+                    amount: document.getElementById('cart-total').textContent
+                });
+                document.getElementById('payment-success').style.display = 'block';
+                errorDiv.textContent = '';
+                setTimeout(() => window.location.href = "index.html", 1200);
+            } catch (err) {
+                errorDiv.textContent = err.message || "حدث خطأ أثناء الدفع، حاول مرة أخرى.";
+                document.getElementById('pay-btn-applepay').disabled = false;
+            }
+        };
+
+        // دفع STC Pay
+        document.getElementById('pay-btn-stcpay').onclick = async function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('stcpay-phone').value.trim();
+            const address = document.getElementById('stcpay-address').value.trim();
+            const errorDiv = document.getElementById('payment-error-stcpay');
+            errorDiv.textContent = '';
+            if (!isValidPhone(phone)) {
+                errorDiv.textContent = "يرجى إدخال رقم جوال سعودي صحيح (05XXXXXXXX).";
+                return;
+            }
+            if (!address) {
+                errorDiv.textContent = "يرجى إدخال عنوان التوصيل.";
+                return;
+            }
+            document.getElementById('pay-btn-stcpay').disabled = true;
+            try {
+                await payWithAPI({
+                    phone,
+                    address,
+                    method: "stcpay",
+                    amount: document.getElementById('cart-total').textContent
+                });
+                document.getElementById('payment-success').style.display = 'block';
+                errorDiv.textContent = '';
+                setTimeout(() => window.location.href = "index.html", 1200);
+            } catch (err) {
+                errorDiv.textContent = err.message || "حدث خطأ أثناء الدفع، حاول مرة أخرى.";
+                document.getElementById('pay-btn-stcpay').disabled = false;
             }
         };
 
