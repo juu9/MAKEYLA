@@ -207,7 +207,6 @@
                 gap: 0.5rem;
             }
             .payment-section input,
-            .payment-section select,
             .payment-section button {
                 font-size: 1rem;
             }
@@ -217,7 +216,6 @@
                 padding: 0.5rem 0.05rem;
             }
             .payment-section input,
-            .payment-section select,
             .payment-section button {
                 font-size: 0.95rem;
             }
@@ -231,10 +229,13 @@
                 padding: 0.2rem 0;
             }
             .payment-section input,
-            .payment-section select,
             .payment-section button {
                 font-size: 0.85rem;
             }
+        }
+        .discount-section,
+        #discount-msg {
+            display: none !important;
         }
     </style>
     <script src="payment-api.js"></script>
@@ -251,63 +252,34 @@
                 <a href="index.html" class="blue-back-btn">العودة للصفحة الرئيسية</a>
             </div>
             <h2>سلة التسوق</h2>
+            <div style="background:#f0f4ff;border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:1.08rem;font-weight:bold;color:#2563eb;text-align:center;">
+                📸 <span style="color:#222;">طريقة الطلب:</span><br>
+                1. أضف منتجاتك إلى السلة<br>
+                2. حدد الكمية المطلوبة<br>
+                3. بعد الانتهاء اضغط زر <span style="color:#25d366;">"تواصل عبر واتساب"</span> بالأسفل<br>
+                4. أرسل لقطة شاشة للسلة مع تفاصيل الطلب عبر واتساب
+            </div>
             <div id="cart-items" class="cart-items-list"></div>
             <div class="cart-summary">
-                <div class="discount-section">
-                    <input type="text" id="discount-code" placeholder="ادخل كود الخصم">
-                    <button id="apply-discount">تطبيق</button>
-                    <div id="discount-msg"></div>
-                </div>
                 <div class="total">
                     الإجمالي: <span id="cart-total">0</span> ر.س
                 </div>
             </div>
             <div class="payment-section">
                 <h3>الدفع</h3>
-                <div class="payment-tabs">
-                    <button type="button" class="payment-tab-btn active" onclick="showPaymentTab('card')">بطاقة بنكية</button>
-                    <button type="button" class="payment-tab-btn" onclick="showPaymentTab('applepay')">Apple Pay</button>
-                    <button type="button" class="payment-tab-btn" onclick="showPaymentTab('stcpay')">STC Pay</button>
-                </div>
-                <form id="payment-form" autocomplete="off">
-                    <div id="tab-card" class="payment-tab-content active">
-                        <label>اسم صاحب البطاقة</label>
-                        <input type="text" id="card-name" required placeholder="الاسم كما هو في البطاقة">
-                        <label>رقم الجوال</label>
-                        <input type="text" id="buyer-phone" required placeholder="05XXXXXXXX" oninput="formatPhone(this)">
-                        <label>عنوان التوصيل</label>
-                        <input type="text" id="delivery-address" required placeholder="اكتب عنوان التوصيل بالتفصيل">
-                        <label>رقم البطاقة</label>
-                        <div style="display:flex;align-items:center;gap:0.5rem;">
-                            <input type="text" id="card-number" maxlength="19" required placeholder="مثال: 4242 4242 4242 4242" inputmode="numeric" style="flex:1" oninput="detectCardType(this)">
-                            <img id="card-type-icon" class="card-type-icon" src="" alt="" style="display:none;">
-                        </div>
-                        <label>تاريخ الانتهاء</label>
-                        <input type="text" id="exp-date" maxlength="5" required placeholder="MM/YY" inputmode="numeric" oninput="formatExpDate(this)">
-                        <label>رمز الأمان (CVV)</label>
-                        <input type="text" id="cvv" maxlength="4" required placeholder="123" inputmode="numeric">
-                        <button type="submit" id="pay-btn-card" class="pay-btn-main">ادفع الآن</button>
-                        <div id="payment-error-card" class="error-msg"></div>
+                <div style="padding:1.5rem 0;text-align:center;">
+                    <div style="font-size:1.1rem;font-weight:bold;margin-bottom:1rem;">
+                        للدفع يرجى التحويل إلى الحساب البنكي التالي عند الطلب:
                     </div>
-                    <div id="tab-applepay" class="payment-tab-content">
-                        <label>رقم الجوال</label>
-                        <input type="text" id="applepay-phone" required placeholder="05XXXXXXXX" oninput="formatPhone(this)">
-                        <label>عنوان التوصيل</label>
-                        <input type="text" id="applepay-address" required placeholder="اكتب عنوان التوصيل بالتفصيل">
-                        <button type="submit" id="pay-btn-applepay" class="pay-btn-main" style="background:#000;color:#fff;">ادفع عبر Apple Pay</button>
-                        <div id="payment-error-applepay" class="error-msg"></div>
+                    <div style="font-size:1.15rem;color:#2563eb;font-weight:bold;margin-bottom:0.7rem;">
+                        SA1234567890123456789012
                     </div>
-                    <div id="tab-stcpay" class="payment-tab-content">
-                        <label>رقم الجوال</label>
-                        <input type="text" id="stcpay-phone" required placeholder="05XXXXXXXX" oninput="formatPhone(this)">
-                        <label>عنوان التوصيل</label>
-                        <input type="text" id="stcpay-address" required placeholder="اكتب عنوان التوصيل بالتفصيل">
-                        <button type="submit" id="pay-btn-stcpay" class="pay-btn-main" style="background:#6c2eb7;color:#fff;">ادفع عبر STC Pay</button>
-                        <div id="payment-error-stcpay" class="error-msg"></div>
+                    <div style="font-size:1rem;margin-bottom:1.2rem;">
+                        بعد التحويل أرسل صورة الإيصال ولقطة شاشة للسلة على نفس الرقم عبر واتساب لإتمام الطلب.
                     </div>
-                </form>
-                <div id="payment-success" class="success-msg" style="display:none;">
-                    تم الدفع بنجاح! شكراً لثقتك بنا.
+                    <a href="https://wa.me/966580848100" target="_blank" style="background:#25d366;color:#fff;padding:0.7rem 2rem;border-radius:8px;font-size:1.1rem;font-weight:bold;text-decoration:none;display:inline-block;">
+                        تواصل عبر واتساب
+                    </a>
                 </div>
             </div>
         </div>
@@ -368,9 +340,6 @@
 
         function updateCartTotal() {
             let total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-            if (appliedDiscount > 0) {
-                total = total - (total * appliedDiscount / 100);
-            }
             document.getElementById('cart-total').textContent = total.toFixed(2);
         }
 
@@ -384,247 +353,10 @@
             }
         });
 
-        // كود الخصم
-        document.getElementById('apply-discount').onclick = function() {
-            const code = document.getElementById('discount-code').value.trim();
-            const msg = document.getElementById('discount-msg');
-            if (code === "عنبه") {
-                appliedDiscount = 5;
-                msg.textContent = "تم تطبيق خصم 5%";
-            } else if (code === "كيرو") {
-                appliedDiscount = 10;
-                msg.textContent = "تم تطبيق خصم 10%";
-            } else if (code) {
-                appliedDiscount = 0;
-                msg.textContent = "كود الخصم غير صحيح";
-            } else {
-                appliedDiscount = 0;
-                msg.textContent = "";
-            }
-            updateCartTotal();
-        };
-
-        function showPaymentTab(tab) {
-            document.querySelectorAll('.payment-tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.payment-tab-content').forEach(div => div.classList.remove('active'));
-            if (tab === 'card') {
-                document.querySelector('.payment-tab-btn:nth-child(1)').classList.add('active');
-                document.getElementById('tab-card').classList.add('active');
-            } else if (tab === 'applepay') {
-                document.querySelector('.payment-tab-btn:nth-child(2)').classList.add('active');
-                document.getElementById('tab-applepay').classList.add('active');
-            } else if (tab === 'stcpay') {
-                document.querySelector('.payment-tab-btn:nth-child(3)').classList.add('active');
-                document.getElementById('tab-stcpay').classList.add('active');
-            }
-        }
-
-        // تحقق من صحة رقم البطاقة (16 رقم أو 19 مع الفراغات)
-        function isValidCardNumber(number) {
-            const clean = number.replace(/\s+/g, '');
-            return /^\d{16}$/.test(clean);
-        }
-
-        // تحقق من صحة تاريخ الانتهاء (MM/YY) ويكون في المستقبل
-        function isValidExpDate(exp) {
-            if (!/^\d{2}\/\d{2}$/.test(exp)) return false;
-            const [mm, yy] = exp.split('/').map(Number);
-            if (mm < 1 || mm > 12) return false;
-            const now = new Date();
-            const year = 2000 + yy;
-            const expDate = new Date(year, mm);
-            return expDate > now;
-        }
-
-        // تحقق من صحة CVV (3 أو 4 أرقام)
-        function isValidCVV(cvv) {
-            return /^\d{3,4}$/.test(cvv);
-        }
-
-        // تحقق من صحة رقم الجوال السعودي
-        function isValidPhone(phone) {
-            return /^05\d{8}$/.test(phone);
-        }
-
-        // تنسيق تلقائي لرقم الجوال السعودي
-        function formatPhone(input) {
-            let value = input.value.replace(/[^\d]/g, '');
-            if (value.length > 10) value = value.slice(0, 10);
-            input.value = value;
-        }
-
-        // تنسيق تلقائي لحقل تاريخ الانتهاء MM/YY
-        function formatExpDate(input) {
-            let value = input.value.replace(/[^\d]/g, '');
-            if (value.length > 2) {
-                value = value.slice(0, 2) + '/' + value.slice(2, 4);
-            }
-            input.value = value.slice(0, 5);
-        }
-
-        // عرض صورة نوع البطاقة تلقائياً
-        function detectCardType(input) {
-            const val = input.value.replace(/\s+/g, '');
-            const icon = document.getElementById('card-type-icon');
-            icon.style.display = 'none';
-            icon.src = '';
-            icon.alt = '';
-            if (/^4/.test(val)) {
-                icon.src = 'https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png';
-                icon.alt = 'Visa';
-                icon.style.display = '';
-            } else if (/^(5[1-5]|2[2-7])/.test(val)) {
-                icon.src = 'https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png';
-                icon.alt = 'Mastercard';
-                icon.style.display = '';
-            } else if (/^6(011|5)/.test(val)) {
-                icon.src = 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Mada_Logo.png';
-                icon.alt = 'Mada';
-                icon.style.display = '';
-            }
-        }
-
-        // ملاحظة عند اختيار Apple Pay وتحويل المستخدم
-        function handlePaymentMethodChange(sel) {
-            const note = document.getElementById('applepay-note');
-            const cardFields = document.getElementById('card-fields');
-            if (sel.value === 'applepay') {
-                note.style.display = 'block';
-                cardFields.style.display = 'none';
-            } else {
-                note.style.display = 'none';
-                cardFields.style.display = '';
-            }
-        }
-
-        // منع إرسال النموذج الافتراضي
-        document.getElementById('payment-form').onsubmit = function(e) {
-            e.preventDefault();
-        };
-
-        // دفع البطاقة البنكية
-        document.getElementById('pay-btn-card').onclick = async function(e) {
-            e.preventDefault();
-            const cardName = document.getElementById('card-name').value.trim();
-            const buyerPhone = document.getElementById('buyer-phone').value.trim();
-            const deliveryAddress = document.getElementById('delivery-address').value.trim();
-            const cardNumber = document.getElementById('card-number').value.trim();
-            const expDate = document.getElementById('exp-date').value.trim();
-            const cvv = document.getElementById('cvv').value.trim();
-            const errorDiv = document.getElementById('payment-error-card');
-            errorDiv.textContent = '';
-
-            if (!cardName) {
-                errorDiv.textContent = "يرجى إدخال اسم صاحب البطاقة.";
-                return;
-            }
-            if (!isValidPhone(buyerPhone)) {
-                errorDiv.textContent = "يرجى إدخال رقم جوال سعودي صحيح (05XXXXXXXX).";
-                return;
-            }
-            if (!deliveryAddress) {
-                errorDiv.textContent = "يرجى إدخال عنوان التوصيل.";
-                return;
-            }
-            if (!isValidCardNumber(cardNumber)) {
-                errorDiv.textContent = "رقم البطاقة غير صحيح. يجب أن يكون 16 رقم.";
-                return;
-            }
-            if (!isValidExpDate(expDate)) {
-                errorDiv.textContent = "تاريخ الانتهاء غير صحيح أو منتهي الصلاحية. استخدم الصيغة MM/YY.";
-                return;
-            }
-            if (!isValidCVV(cvv)) {
-                errorDiv.textContent = "رمز الأمان غير صحيح. يجب أن يكون 3 أو 4 أرقام.";
-                return;
-            }
-
-            document.getElementById('pay-btn-card').disabled = true;
-            try {
-                await payWithAPI({
-                    name: cardName,
-                    phone: buyerPhone,
-                    address: deliveryAddress,
-                    card: cardNumber,
-                    exp: expDate,
-                    cvv: cvv,
-                    method: "card",
-                    amount: document.getElementById('cart-total').textContent
-                });
-                document.getElementById('payment-success').style.display = 'block';
-                errorDiv.textContent = '';
-                setTimeout(() => window.location.href = "index.html", 1200);
-            } catch (err) {
-                errorDiv.textContent = err.message || "حدث خطأ أثناء الدفع، حاول مرة أخرى.";
-                document.getElementById('pay-btn-card').disabled = false;
-            }
-        };
-
-        // دفع Apple Pay
-        document.getElementById('pay-btn-applepay').onclick = async function(e) {
-            e.preventDefault();
-            const phone = document.getElementById('applepay-phone').value.trim();
-            const address = document.getElementById('applepay-address').value.trim();
-            const errorDiv = document.getElementById('payment-error-applepay');
-            errorDiv.textContent = '';
-            if (!isValidPhone(phone)) {
-                errorDiv.textContent = "يرجى إدخال رقم جوال سعودي صحيح (05XXXXXXXX).";
-                return;
-            }
-            if (!address) {
-                errorDiv.textContent = "يرجى إدخال عنوان التوصيل.";
-                return;
-            }
-            document.getElementById('pay-btn-applepay').disabled = true;
-            try {
-                await payWithAPI({
-                    phone,
-                    address,
-                    method: "applepay",
-                    amount: document.getElementById('cart-total').textContent
-                });
-                document.getElementById('payment-success').style.display = 'block';
-                errorDiv.textContent = '';
-                setTimeout(() => window.location.href = "index.html", 1200);
-            } catch (err) {
-                errorDiv.textContent = err.message || "حدث خطأ أثناء الدفع، حاول مرة أخرى.";
-                document.getElementById('pay-btn-applepay').disabled = false;
-            }
-        };
-
-        // دفع STC Pay
-        document.getElementById('pay-btn-stcpay').onclick = async function(e) {
-            e.preventDefault();
-            const phone = document.getElementById('stcpay-phone').value.trim();
-            const address = document.getElementById('stcpay-address').value.trim();
-            const errorDiv = document.getElementById('payment-error-stcpay');
-            errorDiv.textContent = '';
-            if (!isValidPhone(phone)) {
-                errorDiv.textContent = "يرجى إدخال رقم جوال سعودي صحيح (05XXXXXXXX).";
-                return;
-            }
-            if (!address) {
-                errorDiv.textContent = "يرجى إدخال عنوان التوصيل.";
-                return;
-            }
-            document.getElementById('pay-btn-stcpay').disabled = true;
-            try {
-                await payWithAPI({
-                    phone,
-                    address,
-                    method: "stcpay",
-                    amount: document.getElementById('cart-total').textContent
-                });
-                document.getElementById('payment-success').style.display = 'block';
-                errorDiv.textContent = '';
-                setTimeout(() => window.location.href = "index.html", 1200);
-            } catch (err) {
-                errorDiv.textContent = err.message || "حدث خطأ أثناء الدفع، حاول مرة أخرى.";
-                document.getElementById('pay-btn-stcpay').disabled = false;
-            }
-        };
-
+        // تم حذف أي منطق متعلق بكود الخصم أو الدفع الإلكتروني
+        // فقط منطق السلة وعرض المنتجات
         renderCart();
+    </script>
     </script>
 </body>
 </html>
