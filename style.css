@@ -321,3 +321,43 @@ footer a {
         padding: 1rem;
     }
 }
+/* الحاوية الرئيسية */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem;
+}
+
+/* الخطوط */
+h1 {
+  font-size: 2.5rem;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* الصور */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* تجاوب للجوال */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+}

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>مكيلة - متجر البن</title>
     <link rel="stylesheet" href="style.css">
@@ -48,12 +49,67 @@
         .add-cart-btn-inline:hover {
             background: #2563eb;
         }
-        /* إخفاء زر إضافة للسلة من البطاقة الأصلي */
-        .product-card .add-cart-btn:not(.add-cart-btn-inline) {
-            display: none;
+        .products-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px #0002;
+            padding: 1.2rem 1rem 1.5rem 1rem;
+            width: 270px;
+            min-width: 220px;
+            max-width: 95vw;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .product-card img {
+            width: 100%;
+            max-width: 180px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 0.7rem;
+        }
+        @media (max-width: 900px) {
+            .products-grid {
+                gap: 1rem;
+            }
+            .product-card {
+                width: 98vw;
+                min-width: 0;
+                max-width: 98vw;
+                padding: 1rem 0.5rem 1.2rem 0.5rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .products-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .product-card {
+                width: 99vw;
+                padding: 0.7rem 0.1rem 1rem 0.1rem;
+            }
+        }
+        @media (max-width: 400px) {
+            .details-btn,
+            .add-cart-btn-inline {
+                font-size: 0.95rem;
+                padding: 0.3rem 0.7rem;
+            }
+            .product-card {
+                padding: 0.5rem 0.05rem 0.7rem 0.05rem;
+            }
         }
     </style>
     <link rel="shortcut icon" href="IMG-20250701-WA0002.jpg">
+    <!-- ربط ملف الدفع الحقيقي -->
+    <script src="payment-api.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -136,7 +192,6 @@
             <div>رقم الجوال: <b>0580848100</b></div>
         </div>
     </footer>
-
     <script src="main.js"></script>
     <script>
         // تحديث عداد السلة عند تحميل الصفحة وأثناء الإضافة
@@ -175,5 +230,4 @@
         });
     </script>
 </body>
-</html>
 </html>

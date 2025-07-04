@@ -192,5 +192,68 @@ document.getElementById('checkout-btn').onclick = function() {
     document.getElementById('discount-msg').textContent = '';
 };
 
+// تحقق من صحة رقم البطاقة باستخدام خوارزمية Luhn (بروتوكول البطاقات البنكية)
+function isValidCardNumberLuhn(number) {
+    const clean = number.replace(/\s+/g, '');
+    if (!/^\d{16}$/.test(clean)) return false;
+    let sum = 0;
+    for (let i = 0; i < 16; i++) {
+        let digit = parseInt(clean.charAt(15 - i), 10);
+        if (i % 2 === 1) {
+            digit *= 2;
+            if (digit > 9) digit -= 9;
+        }
+        sum += digit;
+    }
+    return sum % 10 === 0;
+}
+
+// تفعيل الدفع الحقيقي عند الطلب من أي مكان في الموقع
+async function payNowFromMain(cartData) {
+    // تحقق من صحة البيانات الأساسية
+    if (!cartData || !Array.isArray(cartData.items) || cartData.items.length === 0) {
+        alert('لا يوجد منتجات في السلة.');
+        return;
+    }
+    if (!cartData.name || cartData.name.trim().length < 2) {
+        alert('يرجى إدخال اسم صحيح.');
+        return;
+    }
+    if (!cartData.phone || !/^05\d{8}$/.test(cartData.phone)) {
+        alert('يرجى إدخال رقم جوال سعودي صحيح (05XXXXXXXX).');
+        return;
+    }
+    if (!cartData.method) {
+        alert('يرجى اختيار طريقة الدفع.');
+        return;
+    }
+    // تحقق من رقم البطاقة باستخدام Luhn
+    if (!cartData.card || !isValidCardNumberLuhn(cartData.card)) {
+        alert('يرجى إدخال رقم بطاقة بنكية صحيح (16 رقم متوافق مع بروتوكول البطاقات).');
+        return;
+    }
+    if (!cartData.exp || !/^\d{2}\/\d{2}$/.test(cartData.exp)) {
+        alert('يرجى إدخال تاريخ انتهاء صحيح (MM/YY).');
+        return;
+    }
+    if (!cartData.cvv || !/^\d{3,4}$/.test(cartData.cvv)) {
+        alert('يرجى إدخال رمز أمان صحيح (3 أو 4 أرقام).');
+        return;
+    }
+
+    try {
+        if (typeof payWithAPI !== "function") {
+            alert('نظام الدفع غير متوفر. تأكد من ربط payment-api.js بشكل صحيح.');
+            return;
+        }
+        await payWithAPI(cartData); // الدالة من payment-api.js
+        alert('تم الدفع بنجاح! تم إرسال طلبك وسيتم التواصل معك قريباً.');
+        window.location.href = "index.html";
+    } catch (err) {
+        alert(err && err.message ? err.message : "حدث خطأ أثناء الدفع.");
+    }
+}
+
 // Initial render
+updateCartCount();
 updateCartCount();

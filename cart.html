@@ -140,7 +140,58 @@
             font-weight: bold;
             text-align: right;
         }
+        @media (max-width: 900px) {
+            .cart-page-container {
+                max-width: 98vw;
+                padding: 1.2rem 0.5rem;
+            }
+        }
+        @media (max-width: 700px) {
+            .cart-page-container {
+                padding: 1rem 0.2rem;
+            }
+            .cart-item-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .cart-actions-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+            .payment-section input,
+            .payment-section select,
+            .payment-section button {
+                font-size: 1rem;
+            }
+        }
+        @media (max-width: 500px) {
+            .cart-page-container {
+                padding: 0.5rem 0.05rem;
+            }
+            .payment-section input,
+            .payment-section select,
+            .payment-section button {
+                font-size: 0.95rem;
+            }
+            .cart-item-row img {
+                width: 32px;
+                height: 40px;
+            }
+        }
+        @media (max-width: 350px) {
+            .cart-page-container {
+                padding: 0.2rem 0;
+            }
+            .payment-section input,
+            .payment-section select,
+            .payment-section button {
+                font-size: 0.85rem;
+            }
+        }
     </style>
+    <script src="payment-api.js"></script>
 </head>
 <body>
     <header>
@@ -172,6 +223,8 @@
                     <input type="text" id="card-name" required placeholder="الاسم كما هو في البطاقة">
                     <label>رقم الجوال</label>
                     <input type="text" id="buyer-phone" required placeholder="05XXXXXXXX" oninput="formatPhone(this)">
+                    <label>عنوان التوصيل</label>
+                    <input type="text" id="delivery-address" required placeholder="اكتب عنوان التوصيل بالتفصيل">
                     <label>رقم البطاقة</label>
                     <input type="text" id="card-number" maxlength="19" required placeholder="مثال: 4242 4242 4242 4242" inputmode="numeric">
                     <label>تاريخ الانتهاء</label>
@@ -302,7 +355,6 @@
             const now = new Date();
             const year = 2000 + yy;
             const expDate = new Date(year, mm);
-            // نهاية الشهر
             return expDate > now;
         }
 
@@ -323,10 +375,21 @@
             input.value = value;
         }
 
-        document.getElementById('payment-form').onsubmit = function(e) {
+        // تنسيق تلقائي لحقل تاريخ الانتهاء MM/YY
+        function formatExpDate(input) {
+            let value = input.value.replace(/[^\d]/g, '');
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            input.value = value.slice(0, 5);
+        }
+
+        // عند الدفع: تحقق من صحة جميع الحقول، نفذ الدفع الحقيقي، ثم اشعار وتحويل للصفحة الرئيسية
+        document.getElementById('payment-form').onsubmit = async function(e) {
             e.preventDefault();
             const cardName = document.getElementById('card-name').value.trim();
             const buyerPhone = document.getElementById('buyer-phone').value.trim();
+            const deliveryAddress = document.getElementById('delivery-address').value.trim();
             const cardNumber = document.getElementById('card-number').value.trim();
             const expDate = document.getElementById('exp-date').value.trim();
             const cvv = document.getElementById('cvv').value.trim();
@@ -340,6 +403,10 @@
             }
             if (!isValidPhone(buyerPhone)) {
                 errorDiv.textContent = "يرجى إدخال رقم جوال سعودي صحيح (05XXXXXXXX).";
+                return;
+            }
+            if (!deliveryAddress) {
+                errorDiv.textContent = "يرجى إدخال عنوان التوصيل.";
                 return;
             }
             if (!isValidCardNumber(cardNumber)) {
@@ -360,24 +427,26 @@
             }
 
             document.getElementById('pay-btn').disabled = true;
-            setTimeout(() => {
-                document.getElementById('payment-success').style.display = 'block';
-                errorDiv.textContent = '';
-                cart = [];
-                localStorage.setItem('cart', '[]');
-                renderCart();
-                updateCartTotal();
-            }, 1200);
-        };
 
-        // تنسيق تلقائي لحقل تاريخ الانتهاء MM/YY
-        function formatExpDate(input) {
-            let value = input.value.replace(/[^\d]/g, '');
-            if (value.length > 2) {
-                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            try {
+                await payWithAPI({
+                    name: cardName,
+                    phone: buyerPhone,
+                    address: deliveryAddress,
+                    card: cardNumber,
+                    exp: expDate,
+                    cvv: cvv,
+                    method: paymentMethod,
+                    amount: document.getElementById('cart-total').textContent
+                });
+
+                alert('تم الدفع بنجاح! تم إرسال طلبك وسيتم التواصل معك قريباً.');
+                window.location.href = "index.html";
+            } catch (err) {
+                errorDiv.textContent = err.message || "حدث خطأ أثناء الدفع، حاول مرة أخرى.";
+                document.getElementById('pay-btn').disabled = false;
             }
-            input.value = value.slice(0, 5);
-        }
+        };
 
         renderCart();
     </script>
