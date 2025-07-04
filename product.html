@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تفاصيل المنتج - مكيلة</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .product-details-container {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            box-shadow: 0 2px 16px #0002;
+        }
+        .product-images {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .product-images img {
+            width: 100px;
+            height: 130px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: #2563eb;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            padding: 0.3rem 1.2rem;
+            background: #f5f7ff;
+            transition: background 0.2s, color 0.2s;
+        }
+        .back-link:hover {
+            background: #2563eb;
+            color: #fff;
+        }
+        .product-details-title {
+            color: #2d3142;
+            margin-bottom: 0.7rem;
+        }
+        .product-details-price {
+            color: #2563eb;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .product-details-desc {
+            color: #444;
+            margin-bottom: 1.2rem;
+        }
+        .add-cart-btn-details {
+            background: #2d3142;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1.2rem;
+            transition: background 0.2s;
+        }
+        .add-cart-btn-details:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="site-name">مكيلة</span>
+        </div>
+    </header>
+    <main>
+        <div class="product-details-container" id="product-details">
+            <!-- سيتم تعبئة التفاصيل بالجافاسكريبت -->
+        </div>
+    </main>
+    <script>
+        // بيانات المنتجات
+        const products = [
+            {
+                id: 1,
+                name: "بن محموص مكيلة",
+                desc: "أفضل أنواع البن المحمص الطازج.<br>وزن العبوة: 500 جرام.<br>مناسب لجميع طرق التحضير.<br>يتم التحميص والتغليف يومياً.",
+                price: 50,
+                img: "IMG-20250701-WA0002.jpg"
+            },
+            {
+                id: 2,
+                name: "بن مكيلة الفاخر",
+                desc: "بن مختار بعناية مع نكهة غنية وقوية لعشاق القهوة.<br>وزن العبوة: 1 كجم.<br>مناسب للإسبريسو والقهوة العربية.<br>تغليف محكم للحفاظ على النكهة.",
+                price: 65,
+                img: "IMG-20250701-WA0002.jpg"
+            },
+            {
+                id: 3,
+                name: "بن مكيلة العضوي",
+                desc: "بن عضوي 100% بدون إضافات، مناسب للمهتمين بالصحة.<br>وزن العبوة: 500 جرام.<br>زراعة عضوية معتمدة.<br>مذاق نقي وطبيعي.",
+                price: 70,
+                img: "IMG-20250701-WA0002.jpg"
+            },
+            {
+                id: 4,
+                name: "بن مكيلة الإسبريسو",
+                desc: "تحميص خاص لعشاق الإسبريسو، طعم مركز وقوي.<br>وزن العبوة: 250 جرام.<br>مناسب لماكينات الإسبريسو.<br>نكهة غنية وكريمية.",
+                price: 60,
+                img: "IMG-20250701-WA0002.jpg"
+            }
+        ];
+
+        // جلب id من الرابط
+        function getProductId() {
+            const params = new URLSearchParams(window.location.search);
+            return Number(params.get('id')) || 1;
+        }
+
+        function addToCartAndGoHome(id) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const prod = products.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...prod, qty: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            window.location.href = "index.html";
+        }
+
+        function renderProductDetails() {
+            const id = getProductId();
+            const prod = products.find(p => p.id === id) || products[0];
+            document.getElementById('product-details').innerHTML = `
+                <a href="index.html" class="back-link">العودة للمنتجات</a>
+                <div class="product-images">
+                    <img src="${prod.img}" alt="${prod.name}">
+                    <img src="${prod.img}" alt="${prod.name}">
+                    <img src="${prod.img}" alt="${prod.name}">
+                    <img src="${prod.img}" alt="${prod.name}">
+                </div>
+                <h2 class="product-details-title">${prod.name}</h2>
+                <div class="product-details-price">${prod.price} ر.س</div>
+                <div class="product-details-desc">${prod.desc}</div>
+                <button class="add-cart-btn-details" onclick="addToCartAndGoHome(${prod.id})">أضف للسلة والعودة للصفحة الرئيسية</button>
+            `;
+        }
+
+        renderProductDetails();
+    </script>
+</body>
+</html>
+</html>

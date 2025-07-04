@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>سلة التسوق - مكيلة</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .cart-page-container {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            box-shadow: 0 2px 16px #0002;
+        }
+        .cart-items-list {
+            margin-bottom: 1.5rem;
+        }
+        .cart-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f7f7f7;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+        .cart-item-row img {
+            width: 40px;
+            height: 50px;
+            object-fit: contain;
+            margin-left: 10px;
+        }
+        .remove-btn {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.2rem 0.7rem;
+            cursor: pointer;
+        }
+        .cart-summary {
+            margin-top: 1rem;
+            text-align: right;
+        }
+        .discount-section {
+            margin: 1rem 0;
+        }
+        .discount-section input[type="text"] {
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-left: 0.5rem;
+        }
+        .discount-section button {
+            background: #2d3142;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.3rem 1rem;
+            cursor: pointer;
+        }
+        #discount-msg {
+            color: #e74c3c;
+            margin-top: 0.3rem;
+        }
+        .total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        .payment-section {
+            margin-top: 2rem;
+            background: #f5f7ff;
+            border-radius: 10px;
+            padding: 1.2rem;
+        }
+        .payment-section label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: bold;
+        }
+        .payment-section input[type="text"], .payment-section input[type="number"] {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        .payment-section button {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        .payment-section button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .success-msg {
+            color: #2563eb;
+            font-weight: bold;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        .blue-back-btn {
+            background: #2563eb;
+            color: #fff;
+            border-radius: 10px;
+            padding: 0.5rem 1.3rem;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            box-shadow: 0 2px 8px #0001;
+            transition: background 0.2s, color 0.2s;
+            display: inline-block;
+            margin-left: 1rem;
+        }
+        .blue-back-btn:hover {
+            background: #1e40af;
+            color: #fff;
+        }
+        .cart-actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+        .error-msg {
+            color: #e74c3c;
+            margin-top: 0.5rem;
+            font-weight: bold;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="site-name">مكيلة</span>
+        </div>
+    </header>
+    <main>
+        <div class="cart-page-container">
+            <div class="cart-actions-bar">
+                <a href="index.html" class="blue-back-btn">العودة للصفحة الرئيسية</a>
+            </div>
+            <h2>سلة التسوق</h2>
+            <div id="cart-items" class="cart-items-list"></div>
+            <div class="cart-summary">
+                <div class="discount-section">
+                    <input type="text" id="discount-code" placeholder="ادخل كود الخصم">
+                    <button id="apply-discount">تطبيق</button>
+                    <div id="discount-msg"></div>
+                </div>
+                <div class="total">
+                    الإجمالي: <span id="cart-total">0</span> ر.س
+                </div>
+            </div>
+            <div class="payment-section">
+                <h3>الدفع</h3>
+                <form id="payment-form" autocomplete="off">
+                    <label>اسم صاحب البطاقة</label>
+                    <input type="text" id="card-name" required placeholder="الاسم كما هو في البطاقة">
+                    <label>رقم الجوال</label>
+                    <input type="text" id="buyer-phone" required placeholder="05XXXXXXXX" oninput="formatPhone(this)">
+                    <label>رقم البطاقة</label>
+                    <input type="text" id="card-number" maxlength="19" required placeholder="مثال: 4242 4242 4242 4242" inputmode="numeric">
+                    <label>تاريخ الانتهاء</label>
+                    <input type="text" id="exp-date" maxlength="5" required placeholder="MM/YY" inputmode="numeric" oninput="formatExpDate(this)">
+                    <label>رمز الأمان (CVV)</label>
+                    <input type="text" id="cvv" maxlength="4" required placeholder="123" inputmode="numeric">
+                    <label>اختر طريقة الدفع</label>
+                    <select id="payment-method" required>
+                        <option value="">اختر</option>
+                        <option value="mada">مدى</option>
+                        <option value="visa">فيزا</option>
+                        <option value="mastercard">ماستركارد</option>
+                        <option value="applepay">Apple Pay</option>
+                        <option value="stcpay">STC Pay</option>
+                    </select>
+                    <button type="submit" id="pay-btn">ادفع الآن</button>
+                    <div id="payment-error" class="error-msg"></div>
+                </form>
+                <div id="payment-success" class="success-msg" style="display:none;">
+                    تم الدفع بنجاح! شكراً لثقتك بنا.
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        // بيانات المنتجات
+        const products = [
+            {
+                id: 1,
+                name: "بن محموص مكيلة",
+                price: 50,
+                img: "IMG-20250701-WA0002.jpg"
+            },
+            {
+                id: 2,
+                name: "بن مكيلة الفاخر",
+                price: 65,
+                img: "IMG-20250701-WA0002.jpg"
+            },
+            {
+                id: 3,
+                name: "بن مكيلة العضوي",
+                price: 70,
+                img: "IMG-20250701-WA0002.jpg"
+            },
+            {
+                id: 4,
+                name: "بن مكيلة الإسبريسو",
+                price: 60,
+                img: "IMG-20250701-WA0002.jpg"
+            }
+        ];
+
+        // تحميل السلة من localStorage
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        let appliedDiscount = 0;
+
+        function renderCart() {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = '';
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p>السلة فارغة.</p>';
+            } else {
+                cart.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'cart-item-row';
+                    div.innerHTML = `
+                        <img src="${item.img}" alt="${item.name}">
+                        <span>${item.name} × ${item.qty}</span>
+                        <span>${item.price * item.qty} ر.س</span>
+                        <button class="remove-btn" data-id="${item.id}">حذف</button>
+                    `;
+                    cartItems.appendChild(div);
+                });
+            }
+            updateCartTotal();
+        }
+
+        function updateCartTotal() {
+            let total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+            if (appliedDiscount > 0) {
+                total = total - (total * appliedDiscount / 100);
+            }
+            document.getElementById('cart-total').textContent = total.toFixed(2);
+        }
+
+        // حذف منتج من السلة
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-btn')) {
+                const id = +e.target.getAttribute('data-id');
+                cart = cart.filter(item => item.id !== id);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+            }
+        });
+
+        // كود الخصم
+        document.getElementById('apply-discount').onclick = function() {
+            const code = document.getElementById('discount-code').value.trim();
+            const msg = document.getElementById('discount-msg');
+            if (code === "عنبه") {
+                appliedDiscount = 5;
+                msg.textContent = "تم تطبيق خصم 5%";
+            } else if (code === "كيرو") {
+                appliedDiscount = 10;
+                msg.textContent = "تم تطبيق خصم 10%";
+            } else if (code) {
+                appliedDiscount = 0;
+                msg.textContent = "كود الخصم غير صحيح";
+            } else {
+                appliedDiscount = 0;
+                msg.textContent = "";
+            }
+            updateCartTotal();
+        };
+
+        // تحقق من صحة رقم البطاقة (16 رقم أو 19 مع الفراغات)
+        function isValidCardNumber(number) {
+            const clean = number.replace(/\s+/g, '');
+            return /^\d{16}$/.test(clean);
+        }
+
+        // تحقق من صحة تاريخ الانتهاء (MM/YY) ويكون في المستقبل
+        function isValidExpDate(exp) {
+            if (!/^\d{2}\/\d{2}$/.test(exp)) return false;
+            const [mm, yy] = exp.split('/').map(Number);
+            if (mm < 1 || mm > 12) return false;
+            const now = new Date();
+            const year = 2000 + yy;
+            const expDate = new Date(year, mm);
+            // نهاية الشهر
+            return expDate > now;
+        }
+
+        // تحقق من صحة CVV (3 أو 4 أرقام)
+        function isValidCVV(cvv) {
+            return /^\d{3,4}$/.test(cvv);
+        }
+
+        // تحقق من صحة رقم الجوال السعودي
+        function isValidPhone(phone) {
+            return /^05\d{8}$/.test(phone);
+        }
+
+        // تنسيق تلقائي لرقم الجوال السعودي
+        function formatPhone(input) {
+            let value = input.value.replace(/[^\d]/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            input.value = value;
+        }
+
+        document.getElementById('payment-form').onsubmit = function(e) {
+            e.preventDefault();
+            const cardName = document.getElementById('card-name').value.trim();
+            const buyerPhone = document.getElementById('buyer-phone').value.trim();
+            const cardNumber = document.getElementById('card-number').value.trim();
+            const expDate = document.getElementById('exp-date').value.trim();
+            const cvv = document.getElementById('cvv').value.trim();
+            const paymentMethod = document.getElementById('payment-method').value;
+            const errorDiv = document.getElementById('payment-error');
+            errorDiv.textContent = '';
+
+            if (!cardName) {
+                errorDiv.textContent = "يرجى إدخال اسم صاحب البطاقة.";
+                return;
+            }
+            if (!isValidPhone(buyerPhone)) {
+                errorDiv.textContent = "يرجى إدخال رقم جوال سعودي صحيح (05XXXXXXXX).";
+                return;
+            }
+            if (!isValidCardNumber(cardNumber)) {
+                errorDiv.textContent = "رقم البطاقة غير صحيح. يجب أن يكون 16 رقم.";
+                return;
+            }
+            if (!isValidExpDate(expDate)) {
+                errorDiv.textContent = "تاريخ الانتهاء غير صحيح أو منتهي الصلاحية. استخدم الصيغة MM/YY.";
+                return;
+            }
+            if (!isValidCVV(cvv)) {
+                errorDiv.textContent = "رمز الأمان غير صحيح. يجب أن يكون 3 أو 4 أرقام.";
+                return;
+            }
+            if (!paymentMethod) {
+                errorDiv.textContent = "يرجى اختيار طريقة الدفع.";
+                return;
+            }
+
+            document.getElementById('pay-btn').disabled = true;
+            setTimeout(() => {
+                document.getElementById('payment-success').style.display = 'block';
+                errorDiv.textContent = '';
+                cart = [];
+                localStorage.setItem('cart', '[]');
+                renderCart();
+                updateCartTotal();
+            }, 1200);
+        };
+
+        // تنسيق تلقائي لحقل تاريخ الانتهاء MM/YY
+        function formatExpDate(input) {
+            let value = input.value.replace(/[^\d]/g, '');
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            input.value = value.slice(0, 5);
+        }
+
+        renderCart();
+    </script>
+</body>
+</html>

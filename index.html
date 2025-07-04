@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مكيلة - متجر البن</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: url('IMG-20250701-WA0002.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .details-btn-box {
+            display: flex;
+            justify-content: center;
+            gap: 0.7rem;
+            margin-top: 0.7rem;
+        }
+        .details-btn {
+            background: #2563eb;
+            color: #fff;
+            border-radius: 8px;
+            padding: 0.4rem 1.2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            box-shadow: 0 2px 8px #0001;
+            transition: background 0.2s, color 0.2s;
+            display: inline-block;
+            margin: 0;
+        }
+        .details-btn:hover {
+            background: #1e40af;
+            color: #fff;
+        }
+        .add-cart-btn-inline {
+            background: #2d3142;
+            color: #fff;
+            border-radius: 8px;
+            padding: 0.4rem 1.2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0001;
+            transition: background 0.2s;
+        }
+        .add-cart-btn-inline:hover {
+            background: #2563eb;
+        }
+        /* إخفاء زر إضافة للسلة من البطاقة الأصلي */
+        .product-card .add-cart-btn:not(.add-cart-btn-inline) {
+            display: none;
+        }
+    </style>
+    <link rel="shortcut icon" href="IMG-20250701-WA0002.jpg">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <span class="site-name">مكيلة</span>
+        </div>
+        <nav>
+            <a href="#support">الدعم</a>
+            <a href="privacy.html">سياسة الخصوصية</a>
+            <a href="terms.html">الشروط والأحكام</a>
+            <a href="cart.html" id="cart-btn">السلة (<span id="cart-count">0</span>)</a>
+        </nav>
+    </header>
+
+    <!-- Main Product Grid -->
+    <main>
+        <h1>منتجاتنا</h1>
+        <div class="products-grid">
+            <div class="product-card" data-id="1">
+                <img src="IMG-20250701-WA0002.jpg" alt="بن محموص مكيلة">
+                <h2>بن محموص مكيلة</h2>
+                <p>أفضل أنواع البن المحمص الطازج.</p>
+                <span class="price">50 ر.س</span>
+                <div class="details-btn-box">
+                    <a class="details-btn" href="product.html?id=1">تفاصيل</a>
+                    <button class="add-cart-btn-inline" onclick="addToCart(1)">أضف للسلة</button>
+                </div>
+            </div>
+            <div class="product-card" data-id="2">
+                <img src="IMG-20250701-WA0002.jpg" alt="بن مكيلة الفاخر">
+                <h2>بن مكيلة الفاخر</h2>
+                <p>بن مختار بعناية مع نكهة غنية وقوية لعشاق القهوة.</p>
+                <span class="price">65 ر.س</span>
+                <div class="details-btn-box">
+                    <a class="details-btn" href="product.html?id=2">تفاصيل</a>
+                    <button class="add-cart-btn-inline" onclick="addToCart(2)">أضف للسلة</button>
+                </div>
+            </div>
+            <div class="product-card" data-id="3">
+                <img src="IMG-20250701-WA0002.jpg" alt="بن مكيلة العضوي">
+                <h2>بن مكيلة العضوي</h2>
+                <p>بن عضوي 100% بدون إضافات، مناسب للمهتمين بالصحة.</p>
+                <span class="price">70 ر.س</span>
+                <div class="details-btn-box">
+                    <a class="details-btn" href="product.html?id=3">تفاصيل</a>
+                    <button class="add-cart-btn-inline" onclick="addToCart(3)">أضف للسلة</button>
+                </div>
+            </div>
+            <div class="product-card" data-id="4">
+                <img src="IMG-20250701-WA0002.jpg" alt="بن مكيلة الإسبريسو">
+                <h2>بن مكيلة الإسبريسو</h2>
+                <p>تحميص خاص لعشاق الإسبريسو، طعم مركز وقوي.</p>
+                <span class="price">60 ر.س</span>
+                <div class="details-btn-box">
+                    <a class="details-btn" href="product.html?id=4">تفاصيل</a>
+                    <button class="add-cart-btn-inline" onclick="addToCart(4)">أضف للسلة</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Product Details Modal -->
+    <div id="product-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <img src="IMG-20250701-WA0002.jpg" alt="بن محموص مكيلة">
+            <h2>بن محموص مكيلة</h2>
+            <p>بن محموص عالي الجودة، طازج ومعبأ بعناية ليصلك بأفضل نكهة.</p>
+            <span class="price">50 ر.س</span>
+            <button class="add-cart-btn">أضف للسلة</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div id="support">
+            <h3>الدعم</h3>
+            <div>البريد الإلكتروني: <b>makeylabon@gmail.com</b></div>
+            <div>رقم الجوال: <b>0580848100</b></div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // تحديث عداد السلة عند تحميل الصفحة وأثناء الإضافة
+        function updateCartCount() {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            document.getElementById('cart-count').textContent = cart.reduce((a, item) => a + item.qty, 0);
+        }
+
+        function addToCart(id) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const products = [
+                {id:1, name:"بن محموص مكيلة", price:50, img:"IMG-20250701-WA0002.jpg"},
+                {id:2, name:"بن مكيلة الفاخر", price:65, img:"IMG-20250701-WA0002.jpg"},
+                {id:3, name:"بن مكيلة العضوي", price:70, img:"IMG-20250701-WA0002.jpg"},
+                {id:4, name:"بن مكيلة الإسبريسو", price:60, img:"IMG-20250701-WA0002.jpg"}
+            ];
+            const prod = products.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...prod, qty: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        document.addEventListener('DOMContentLoaded', updateCartCount);
+
+        // ربط زر السلة في أي مكان (حتى لو تم تغييره ديناميكياً)
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('#cart-btn');
+            if (target) {
+                window.location.href = 'cart.html';
+            }
+        });
+    </script>
+</body>
+</html>
+</html>
