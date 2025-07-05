@@ -257,8 +257,9 @@
                 📸 <span style="color:#222;">طريقة الطلب:</span><br>
                 1. أضف منتجاتك إلى السلة<br>
                 2. حدد الكمية المطلوبة<br>
-                3. بعد الانتهاء اضغط زر <span style="color:#25d366;">"تواصل عبر واتساب"</span> بالأسفل<br>
-                4. أرسل لقطة شاشة للسلة مع تفاصيل الطلب عبر واتساب
+                3. اضغط زر <span style="color:#25d366;">"تواصل عبر واتساب"</span> بالأسفل<br>
+                4. سيتم إرسال تفاصيل طلبك تلقائياً، فقط أرسل موقعك<br>
+                5. سيتم تزويدك برقم الحساب البنكي للتحويل عند الطلب مباشرة
             </div>
             <div id="cart-items" class="cart-items-list"></div>
             <div class="cart-summary">
@@ -270,15 +271,12 @@
                 <h3>الدفع</h3>
                 <div style="padding:1.5rem 0;text-align:center;">
                     <div style="font-size:1.1rem;font-weight:bold;margin-bottom:1rem;">
-                        للدفع يرجى التحويل إلى الحساب البنكي التالي عند الطلب:
-                    </div>
-                    <div style="font-size:1.15rem;color:#2563eb;font-weight:bold;margin-bottom:0.7rem;">
-                        SA1234567890123456789012
+                        سيتم تزويدك برقم الحساب البنكي للتحويل بعد إرسال الطلب عبر واتساب.
                     </div>
                     <div style="font-size:1rem;margin-bottom:1.2rem;">
-                        بعد التحويل أرسل صورة الإيصال ولقطة شاشة للسلة على نفس الرقم عبر واتساب لإتمام الطلب.
+                        بعد التحويل أرسل صورة الإيصال على نفس الرقم عبر واتساب لإتمام الطلب.
                     </div>
-                    <a href="https://wa.me/966580848100" target="_blank" style="background:#25d366;color:#fff;padding:0.7rem 2rem;border-radius:8px;font-size:1.1rem;font-weight:bold;text-decoration:none;display:inline-block;">
+                    <a id="whatsapp-order-btn" href="https://wa.me/966580848100" target="_blank" style="background:#25d366;color:#fff;padding:0.7rem 2rem;border-radius:8px;font-size:1.1rem;font-weight:bold;text-decoration:none;display:inline-block;">
                         تواصل عبر واتساب
                     </a>
                 </div>
@@ -337,11 +335,32 @@
                 });
             }
             updateCartTotal();
+            updateWhatsappLink();
         }
 
         function updateCartTotal() {
             let total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
             document.getElementById('cart-total').textContent = total.toFixed(2);
+        }
+
+        // توليد نص الطلب للواتساب
+        function getOrderDetailsText() {
+            if (!cart || cart.length === 0) return "لم يتم اختيار أي منتج.";
+            let msg = "طلب جديد من موقع مكيلة:\n";
+            cart.forEach((item, idx) => {
+                msg += `${idx + 1}- ${item.name} × ${item.qty} = ${item.price * item.qty} ر.س\n`;
+            });
+            msg += `الإجمالي: ${cart.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)} ر.س\n`;
+            msg += "\nيرجى إرسال موقعك للتحويل والتوصيل.";
+            return encodeURIComponent(msg);
+        }
+
+        // تحديث رابط الواتساب ليحمل رسالة الطلب تلقائياً
+        function updateWhatsappLink() {
+            const btn = document.getElementById('whatsapp-order-btn');
+            if (!btn) return;
+            const base = "https://wa.me/966580848100?text=";
+            btn.href = base + getOrderDetailsText();
         }
 
         // حذف منتج من السلة
@@ -359,5 +378,7 @@
         renderCart();
     </script>
     </script>
+</body>
+</html>
 </body>
 </html>
