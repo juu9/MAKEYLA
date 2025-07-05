@@ -395,32 +395,3 @@
     </script>
 </body>
 </html>
-</body>
-</html>
-</html>
-</body>
-</html>
-                }
-                localStorage.removeItem('order_done');
-            }
-        });
-
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-btn')) {
-                const id = +e.target.getAttribute('data-id');
-                cart = cart.filter(item => item.id !== id);
-                localStorage.setItem('cart', JSON.stringify(cart));
-                renderCart();
-            }
-        });
-
-        renderCart();
-    </script>
-    </script>
-</body>
-</html>
-</body>
-</html>
-</html>
-</body>
-</html>
