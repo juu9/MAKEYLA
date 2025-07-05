@@ -259,7 +259,7 @@
                 2. حدد الكمية المطلوبة<br>
                 3. اضغط زر <span style="color:#25d366;">"تواصل عبر واتساب"</span> بالأسفل<br>
                 4. سيتم إرسال تفاصيل طلبك تلقائياً، فقط أرسل موقعك<br>
-                5. سيتم تزويدك برقم الحساب البنكي للتحويل عند الطلب مباشرة
+                5. رقم الحساب البنكي سيصلك من البائع مباشرة بعد الطلب
             </div>
             <div id="cart-items" class="cart-items-list"></div>
             <div class="cart-summary">
@@ -271,7 +271,7 @@
                 <h3>الدفع</h3>
                 <div style="padding:1.5rem 0;text-align:center;">
                     <div style="font-size:1.1rem;font-weight:bold;margin-bottom:1rem;">
-                        سيتم تزويدك برقم الحساب البنكي للتحويل بعد إرسال الطلب عبر واتساب.
+                        سيتم تزويدك برقم الحساب البنكي من البائع بعد إرسال الطلب عبر واتساب.
                     </div>
                     <div style="font-size:1rem;margin-bottom:1.2rem;">
                         بعد التحويل أرسل صورة الإيصال على نفس الرقم عبر واتساب لإتمام الطلب.
@@ -345,25 +345,42 @@
 
         // توليد نص الطلب للواتساب
         function getOrderDetailsText() {
-            if (!cart || cart.length === 0) return "لم يتم اختيار أي منتج.";
+            let cartData = [];
+            try {
+                cartData = JSON.parse(localStorage.getItem('cart') || '[]');
+            } catch { cartData = []; }
+            if (!cartData || cartData.length === 0) return "لم يتم اختيار أي منتج.";
             let msg = "طلب جديد من موقع مكيلة:\n";
-            cart.forEach((item, idx) => {
+            cartData.forEach((item, idx) => {
                 msg += `${idx + 1}- ${item.name} × ${item.qty} = ${item.price * item.qty} ر.س\n`;
             });
-            msg += `الإجمالي: ${cart.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)} ر.س\n`;
+            msg += `الإجمالي: ${cartData.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)} ر.س\n`;
             msg += "\nيرجى إرسال موقعك للتحويل والتوصيل.";
-            return encodeURIComponent(msg);
+            return msg;
         }
 
-        // تحديث رابط الواتساب ليحمل رسالة الطلب تلقائياً
-        function updateWhatsappLink() {
-            const btn = document.getElementById('whatsapp-order-btn');
-            if (!btn) return;
-            const base = "https://wa.me/966580848100?text=";
-            btn.href = base + getOrderDetailsText();
-        }
+        // عند الضغط على زر الواتساب: افتح واتساب مع نص الطلب مباشرة
+        document.getElementById('whatsapp-order-btn').addEventListener('click', function(e) {
+            let cartData = [];
+            try {
+                cartData = JSON.parse(localStorage.getItem('cart') || '[]');
+            } catch { cartData = []; }
+            if (!cartData || cartData.length === 0) {
+                // لا ترسل شيء إذا السلة فارغة
+                return;
+            }
+            const msg = encodeURIComponent(getOrderDetailsText());
+            const url = "https://wa.me/966580848100?text=" + msg;
+            window.open(url, '_blank');
+            // امسح السلة بعد الإرسال فقط
+            localStorage.removeItem('cart');
+            cart = [];
+            renderCart();
+            // لا تظهر أي إشعار نجاح
+            // لا تضع order_done في localStorage
+            e.preventDefault();
+        });
 
-        // حذف منتج من السلة
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('remove-btn')) {
                 const id = +e.target.getAttribute('data-id');
@@ -373,12 +390,37 @@
             }
         });
 
-        // تم حذف أي منطق متعلق بكود الخصم أو الدفع الإلكتروني
-        // فقط منطق السلة وعرض المنتجات
         renderCart();
     </script>
     </script>
 </body>
+</html>
+</body>
+</html>
+</html>
+</body>
+</html>
+                }
+                localStorage.removeItem('order_done');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-btn')) {
+                const id = +e.target.getAttribute('data-id');
+                cart = cart.filter(item => item.id !== id);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+            }
+        });
+
+        renderCart();
+    </script>
+    </script>
+</body>
+</html>
+</body>
+</html>
 </html>
 </body>
 </html>
